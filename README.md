@@ -22,7 +22,7 @@ The Image Caption Generator for Social Media is a fun and interactive web applic
 ## Installation
 1. Clone the repository:
    ```bash
-[   git clone https://github.com/aryan1112003/Image-Caption-Generator.git]   ```
+[git clone https://github.com/aryan1112003/Image-Caption-Generator.git]   ```
 
 2. Navigate to the project directory:
    ```bash

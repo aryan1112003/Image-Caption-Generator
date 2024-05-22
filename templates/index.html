@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Caption Generator for Social Media</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+        h1 {
+            color: #1da1f2;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        label.upload-button {
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: #1da1f2;
+            color: #fff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 2px solid #1da1f2;
+        }
+        label.upload-button:hover {
+            background-color: #0d8ae8;
+        }
+        button[type="submit"] {
+            padding: 15px 30px;
+            background-color: #1da1f2;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        button[type="submit"]:hover {
+            background-color: #0d8ae8;
+        }
+        #caption {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .share-buttons {
+            margin-top: 20px;
+        }
+        .share-button {
+            padding: 12px 24px;
+            font-size: 16px;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .share-button:last-child {
+            margin-right: 0;
+        }
+        .share-button.instagram {
+            background-color: #e1306c;
+        }
+        .share-button.twitter {
+            background-color: #1da1f2;
+        }
+        .share-button:hover {
+            opacity: 0.8;
+        }
+        /* Add animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .container {
+            animation: fadeIn 1s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generate Captions with Style!</h1>
+        <form action="/generate_caption" method="post" enctype="multipart/form-data">
+            <label for="image" class="upload-button">Choose Image</label>
+            <input type="file" id="image" name="image" accept="image/*">
+            <button type="submit">Generate Caption</button>
+        </form>
+        <div id="caption"></div>
+        <div class="share-buttons">
+            <button class="share-button instagram" id="share-instagram" style="display:none;">Share on Instagram</button>
+            <button class="share-button twitter" id="share-twitter" style="display:none;">Share on Twitter</button>
+        </div>
+    </div>
+    <script>
+        const form = document.querySelector('form');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const response = await fetch('/generate_caption', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            const captionElement = document.getElementById('caption');
+            const shareInstagramButton = document.getElementById('share-instagram');
+            const shareTwitterButton = document.getElementById('share-twitter');
+            
+            if (result.error) {
+                captionElement.innerText = result.error;
+                shareInstagramButton.style.display = 'none';
+                shareTwitterButton.style.display = 'none';
+            } else {
+                captionElement.innerText = result.caption;
+                shareInstagramButton.style.display = 'block';
+                shareTwitterButton.style.display = 'block';
+
+                // Add share functionality for Instagram
+                shareInstagramButton.onclick = () => {
+                    const instagramUrl = `https://www.instagram.com/?caption=${encodeURIComponent(result.caption)}`;
+                    window.open(instagramUrl, '_blank');
+                };
+
+                // Add share functionality for Twitter
+                shareTwitterButton.onclick = () => {
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(result.caption)}`;
+                    window.open(twitterUrl, '_blank');
+                };
+            }
+        });
+    </script>
+</body>
+</html>
